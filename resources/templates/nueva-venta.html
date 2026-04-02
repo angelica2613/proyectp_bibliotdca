@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Nueva Venta - Entre Páginas</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* Estilos del Fondo y Contenedor */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 0;
+        }
+
+        nav,
+        main,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contenedor-form {
+            background: linear-gradient(135deg, #fffef0, #f9f9f9);
+            border: 3px solid #d4af37;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            color: #1e3a8a;
+        }
+
+        /* Estilos de botones */
+        .btn-submit {
+            background-color: #059669;
+        }
+
+        .btn-submit:hover {
+            background-color: #047857;
+        }
+
+        .btn-cancel {
+            background-color: #dc2626;
+        }
+
+        .btn-cancel:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-add {
+            background-color: #3b82f6;
+        }
+
+        .btn-add:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-remove {
+            background-color: #ef4444;
+        }
+
+        .btn-remove:hover {
+            background-color: #dc2626;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+    <nav class="bg-blue-900 text-white py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <a th:href="@{/dashboard}" class="text-xl font-bold">
+                <i class="fas fa-book-open mr-2"></i>Entre Páginas
+            </a>
+            <a th:href="@{/ventas}" class="text-white hover:underline">Volver a Ventas</a>
+        </div>
+    </nav>
+
+    <main class="flex-1 p-6">
+        <div class="contenedor-form p-8 mx-auto max-w-5xl">
+            <h1 class="text-3xl font-bold text-center mb-6">
+                <i class="fas fa-cash-register mr-2"></i> Registrar Nueva Venta
+            </h1>
+
+            <form th:action="@{/ventas/guardar}" th:object="${venta}" method="post" id="formVenta">
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border border-blue-200">
+                    <h2 class="text-xl font-semibold text-blue-800 mb-4 border-b pb-2">Información del Cliente</h2>
+                    <div class="mb-4">
+                        <label for="cliente" class="block text-gray-700 font-medium mb-2">Cliente:</label>
+                        <select id="cliente" name="clienteId"
+                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="" selected>Seleccionar Cliente (Opcional, para Mostrador)</option>
+                            <option th:each="cliente : ${clientes}" th:value="${cliente.id}"
+                                th:text="${cliente.nombre + ' (' + cliente.dni + ')'}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="tipoComprobante" class="block text-gray-700 font-medium mb-2">Tipo de
+                            Comprobante:</label>
+                        <select id="tipoComprobante" th:field="*{tipoComprobante}"
+                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="BOLETA">BOLETA</option>
+                            <option value="FACTURA">FACTURA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border border-green-200">
+                    <h2 class="text-xl font-semibold text-green-800 mb-4 border-b pb-2">Agregar Libros</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div class="md:col-span-2">
+                            <label for="libroSelector" class="block text-gray-700 font-medium mb-2">Libro:</label>
+                            <select id="libroSelector"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="" data-precio="0" data-stock="0" selected disabled>Seleccione un libro
+                                </option>
+                                <option th:each="libro : ${libros}" th:value="${libro.id}"
+                                    th:text="${libro.titulo + ' (S/' + #numbers.formatDecimal(libro.precio, 1, 2) + ')'}"
+                                    th:data-precio="${libro.precio}" th:data-stock="${libro.stock}"></option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="cantidad" class="block text-gray-700 font-medium mb-2">Cantidad:</label>
+                            <input type="number" id="cantidad" value="1" min="1"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+
+                        <div class="flex items-end">
+                            <button type="button" id="agregarLibroBtn"
+                                class="btn-add w-full h-10 text-white font-bold rounded-lg shadow-md transition duration-150">
+                                <i class="fas fa-cart-plus mr-1"></i> Añadir
+                            </button>
+                        </div>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-600 mt-6 mb-3">Artículos de la Venta:</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-gray-50 border border-gray-300 rounded-lg" id="tablaDetalles">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="p-2 border-r text-left">Libro</th>
+                                    <th class="p-2 border-r">Cantidad</th>
+                                    <th class="p-2 border-r">Precio Unit.</th>
+                                    <th class="p-2 border-r">Subtotal</th>
+                                    <th class="p-2">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="filaVacia" class="text-center text-gray-500 italic">
+                                    <td colspan="5" class="p-4">No hay libros agregados.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <div class="text-right w-full max-w-xs">
+                            <p class="text-xl font-bold text-gray-700 border-t pt-2">
+                                Total Final: <span id="totalVenta" class="text-green-700 text-2xl">S/ 0.00</span>
+                                <input type="hidden" name="total" id="inputTotalFinal" value="0.00" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 mt-8">
+                    <a th:href="@{/ventas}"
+                        class="btn-cancel px-6 py-3 text-white font-bold rounded-lg shadow-md transition duration-150">
+                        <i class="fas fa-times mr-2"></i> Cancelar
+                    </a>
+                    <button type="submit"
+                        class="btn-submit px-6 py-3 text-white font-bold rounded-lg shadow-md transition duration-150"
+                        disabled id="btnRegistrarVenta">
+                        <i class="fas fa-check-circle mr-2"></i> Registrar Venta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-blue-900 text-white py-4 text-center mt-auto">
+        <p>© 2025 Entre Páginas</p>
+    </footer>
+
+    <script>
+        // Check for error messages from the server (Redirection Flash Attributes)
+        document.addEventListener('DOMContentLoaded', function () {
+            /*<![CDATA[*/
+            const errorMessage = "[[${errorMessage}]]";
+            /*]]>*/
+
+            if (errorMessage && errorMessage !== "null" && errorMessage !== "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en la venta',
+                    text: errorMessage,
+                    confirmButtonColor: '#dc2626'
+                });
+            }
+        });
+
+        let detalleIndex = 0; // Contador para los índices de los inputs de Thymeleaf
+
+        $(document).ready(function () {
+            // Bloquear el botón de registrar si no hay artículos
+            function verificarCarrito() {
+                const rowCount = $('#tablaDetalles tbody tr').length;
+                if (rowCount > 0 && $('#tablaDetalles tbody tr:first').attr('id') !== 'filaVacia') {
+                    $('#btnRegistrarVenta').prop('disabled', false);
+                } else {
+                    $('#btnRegistrarVenta').prop('disabled', true);
+                }
+            }
+
+            // Función principal para calcular el total
+            function calcularTotal() {
+                let total = 0;
+                $('#tablaDetalles tbody tr:not(#filaVacia)').each(function () {
+                    // Obtiene el subtotal de cada fila (el valor está guardado en el input oculto)
+                    const subtotal = parseFloat($(this).find('.input-subtotal').val());
+                    total += subtotal;
+                });
+
+                // Actualiza el span visible y el input oculto
+                $('#totalVenta').text(`S/ ${total.toFixed(2)}`);
+                $('#inputTotalFinal').val(total.toFixed(2));
+            }
+
+            // -------------------------------------------------------------
+            // Lógica para añadir un libro al detalle de la venta
+            // -------------------------------------------------------------
+            $('#agregarLibroBtn').click(function () {
+                const selector = $('#libroSelector');
+                const libroId = selector.val();
+                const cantidad = parseInt($('#cantidad').val());
+
+                if (!libroId) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Atención',
+                        text: 'Por favor, seleccione un libro.',
+                        confirmButtonColor: '#3b82f6'
+                    });
+                    return;
+                }
+                if (isNaN(cantidad) || cantidad < 1) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Atención',
+                        text: 'La cantidad debe ser 1 o más.',
+                        confirmButtonColor: '#3b82f6'
+                    });
+                    return;
+                }
+
+                const libroTitulo = selector.find(':selected').text().split('(')[0].trim();
+                const precioUnitario = parseFloat(selector.find(':selected').data('precio'));
+                const stockDisponible = parseInt(selector.find(':selected').data('stock'));
+                const subtotal = precioUnitario * cantidad;
+
+                // Validación de Stock
+                // Validación de Stock
+                if (cantidad > stockDisponible) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Stock Insuficiente',
+                        text: `No hay suficiente stock. Disponible: ${stockDisponible}.`,
+                        confirmButtonColor: '#dc2626'
+                    });
+                    return;
+                }
+
+                // Remover la fila vacía si existe
+                $('#filaVacia').remove();
+
+                // Crear la nueva fila (row) para el detalle de venta
+                const newRow = `
+                  <tr data-id="${libroId}">
+                      <td class="p-2 text-left">${libroTitulo}
+                          <input type="hidden" name="detallesVenta[${detalleIndex}].libro.id" value="${libroId}" />
+                      </td>
+                      <td class="p-2">
+                          ${cantidad}
+                          <input type="hidden" name="detallesVenta[${detalleIndex}].cantidad" value="${cantidad}" class="input-cantidad" />
+                      </td>
+                      <td class="p-2">S/ ${precioUnitario.toFixed(2)}
+                          <input type="hidden" name="detallesVenta[${detalleIndex}].precioUnitario" value="${precioUnitario.toFixed(2)}" />
+                      </td>
+                      <td class="p-2 font-bold text-green-600">S/ ${subtotal.toFixed(2)}
+                          <input type="hidden" value="${subtotal.toFixed(2)}" class="input-subtotal" />
+                      </td>
+                      <td class="p-2">
+                          <button type="button" class="btn-remove px-3 py-1 text-white text-sm rounded transition duration-150" onclick="removerLibro(this, ${libroId}, ${cantidad})">
+                              <i class="fas fa-trash-alt"></i>
+                          </button>
+                      </td>
+                  </tr>
+              `;
+
+                $('#tablaDetalles tbody').append(newRow);
+                detalleIndex++; // Incrementa el índice para el próximo detalle
+
+                calcularTotal();
+                verificarCarrito();
+            });
+
+            // Inicializa la verificación al cargar la página
+            verificarCarrito();
+        });
+
+        // -------------------------------------------------------------
+        // Función para remover un libro (Fuera del ready para ser accesible desde el onclick)
+        // -------------------------------------------------------------
+        function removerLibro(btn, libroId, cantidadRemovida) {
+            $(btn).closest('tr').remove();
+
+            // Llama a la función global para recalcular el total
+            // El resto de lógica (como ajustar el stock en la interfaz) es más complejo 
+            // y se maneja mejor en el lado del servidor.
+
+            // Vuelve a calcular el total después de la eliminación
+            calcularTotal();
+
+            // Si no quedan filas, añade la fila vacía de nuevo
+            if ($('#tablaDetalles tbody tr').length === 0) {
+                $('#tablaDetalles tbody').append(`
+                  <tr id="filaVacia" class="text-center text-gray-500 italic">
+                      <td colspan="5" class="p-4">No hay libros agregados.</td>
+                  </tr>
+              `);
+                $('#btnRegistrarVenta').prop('disabled', true);
+            }
+        }
+
+        // La función calcularTotal debe ser global o accesible.
+        // Ya la definimos en $(document).ready, pero podemos hacer una versión global simple:
+        function calcularTotal() {
+            let total = 0;
+            $('#tablaDetalles tbody tr:not(#filaVacia)').each(function () {
+                const subtotal = parseFloat($(this).find('.input-subtotal').val());
+                total += subtotal;
+            });
+            $('#totalVenta').text(`S/ ${total.toFixed(2)}`);
+            $('#inputTotalFinal').val(total.toFixed(2));
+        }
+
+    </script>
+</body>
+
+</html>

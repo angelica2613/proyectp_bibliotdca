@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      /* Asegura que el footer se quede abajo */
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      /* Asegura que estén por encima del overlay */
+      z-index: 1;
+    }
+
+    .contenedor-dashboard {
+      background: linear-gradient(135deg, #fffef0, #f5f5f5);
+      border: 3px solid #d4af37;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .boton-whatsapp {
+      background: #25d366;
+      color: white;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .boton-whatsapp:hover {
+      background: #128c7e;
+      transform: translateY(-2px);
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar .logo {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    }
+
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a,
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover,
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      /* Añadir transición para sombra */
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      /* Sombra más pronunciada al pasar el ratón */
+    }
+
+    @media (max-width: 600px) {
+      .contenedor-dashboard {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      .boton-whatsapp {
+        font-size: 0.9rem;
+      }
+
+      .navbar .logo {
+        height: 35px;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 p-6">
+    <div class="contenedor-dashboard p-6 mx-auto max-w-7xl">
+      <h1 class="text-4xl font-extrabold text-center mb-8 text-blue-800">
+        <i class="fas fa-chart-line mr-3 text-yellow-600"></i> Panel de
+        Control
+      </h1>
+
+      <!-- Sección de Resumen General -->
+      <section class="mb-10">
+        <h2 class="text-2xl font-semibold text-blue-700 mb-6 border-b-2 border-yellow-500 pb-2">
+          <i class="fas fa-info-circle mr-2"></i> Resumen General
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Card Total Libros -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-book text-5xl text-blue-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">Total Libros</h3>
+            <p class="text-5xl font-extrabold text-blue-600 mb-4" th:text="${totalLibros}">
+              0
+            </p>
+            <a th:href="@{/libros}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Libros <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+
+          <!-- Card Libros Disponibles -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Libros Disponibles
+            </h3>
+            <p class="text-5xl font-extrabold text-green-600 mb-4" th:text="${totalLibrosDisponibles}">
+              0
+            </p>
+            <a th:href="@{/libros?disponible=true}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Disponibles <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+
+          <!-- Card Libros No Disponibles -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-times-circle text-5xl text-red-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Libros No Disponibles
+            </h3>
+            <p class="text-5xl font-extrabold text-red-600 mb-4" th:text="${totalLibrosNoDisponibles}">
+              0
+            </p>
+            <a th:href="@{/libros?disponible=false}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver No Disponibles <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+
+          <!-- Card Total Clientes -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-users text-5xl text-purple-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Total Clientes
+            </h3>
+            <p class="text-5xl font-extrabold text-purple-600 mb-4" th:text="${totalClientes}">
+              0
+            </p>
+            <a th:href="@{/clientes}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Clientes <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Préstamos -->
+      <section class="mb-10">
+        <h2 class="text-2xl font-semibold text-blue-700 mb-6 border-b-2 border-yellow-500 pb-2">
+          <i class="fas fa-handshake mr-2"></i> Gestión de Préstamos
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Card Total Préstamos -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-exchange-alt text-5xl text-orange-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Total Préstamos
+            </h3>
+            <p class="text-5xl font-extrabold text-orange-600 mb-4" th:text="${totalPrestamos}">
+              0
+            </p>
+            <a th:href="@{/prestamos}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Préstamos <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+
+          <!-- Card Préstamos Activos -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-hourglass-half text-5xl text-yellow-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Préstamos Activos
+            </h3>
+            <p class="text-5xl font-extrabold text-yellow-600 mb-4" th:text="${totalPrestamosActivos}">
+              0
+            </p>
+            <a th:href="@{/prestamos?estado=activo}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Activos <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+
+          <!-- Card Préstamos Vencidos -->
+          <div class="card bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <i class="fas fa-exclamation-triangle text-5xl text-red-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-blue-900 mb-2">
+              Préstamos Vencidos
+            </h3>
+            <p class="text-5xl font-extrabold text-red-700 mb-4" th:text="${totalPrestamosVencidos}">
+              0
+            </p>
+            <a th:href="@{/prestamos?estado=vencido}" class="text-blue-500 hover:text-blue-700 font-medium">
+              Ver Vencidos <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Acciones Rápidas -->
+      <section>
+        <h2 class="text-2xl font-semibold text-blue-700 mb-6 border-b-2 border-yellow-500 pb-2">
+          <i class="fas fa-bolt mr-2"></i> Acciones Rápidas
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <a th:href="@{/libros/nuevo}"
+            class="card bg-blue-600 text-white p-6 rounded-lg shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all duration-300">
+            <i class="fas fa-plus-circle text-3xl mr-3"></i>
+            <span class="text-xl font-semibold">Añadir Nuevo Libro</span>
+          </a>
+          <a th:href="@{/clientes/nuevo}"
+            class="card bg-green-600 text-white p-6 rounded-lg shadow-lg flex items-center justify-center hover:bg-green-700 transition-all duration-300">
+            <i class="fas fa-user-plus text-3xl mr-3"></i>
+            <span class="text-xl font-semibold">Añadir Nuevo Cliente</span>
+          </a>
+          <a th:href="@{/prestamos/nuevo}"
+            class="card bg-yellow-600 text-white p-6 rounded-lg shadow-lg flex items-center justify-center hover:bg-yellow-700 transition-all duration-300">
+            <i class="fas fa-handshake text-3xl mr-3"></i>
+            <span class="text-xl font-semibold">Registrar Nuevo Préstamo</span>
+          </a>
+          <a th:href="@{/ventas/nueva}"
+            class="card bg-purple-600 text-white p-6 rounded-lg shadow-lg flex items-center justify-center hover:bg-purple-700 transition-all duration-300">
+            <i class="fas fa-cash-register text-3xl mr-3"></i>
+            <span class="text-xl font-semibold">Registrar Nueva Venta</span>
+          </a>
+        </div>
+      </section>
+
+      <p class="text-center text-gray-600 mt-10">
+        Gestiona tu biblioteca desde aquí. Usa los enlaces de navegación para
+        administrar usuarios, clientes, libros, categorías, perfiles, catálogo
+        y préstamos.
+      </p>
+    </div>
+  </main>
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+  <script th:src="@{/js/dashboard.js}"></script>
+</body>
+
+</html>

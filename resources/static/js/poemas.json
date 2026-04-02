@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "titulo": "Puedo Escribir...",
+    "texto": "Puedo escribir los versos más tristes esta noche. Yo la quise, y a veces ella también me quiso.",
+    "autor": "Pablo Neruda"
+  },
+  {
+    "id": 2,
+    "titulo": "Táctica y Estrategia",
+    "texto": "Mi táctica es mirarte, aprender como sos, quererte como sos. Mi estrategia es que un día cualquiera, no sé cómo ni con qué pretexto, por fin me necesites.",
+    "autor": "Mario Benedetti"
+  },
+  {
+    "id": 3,
+    "titulo": "Si Me Quieres",
+    "texto": "Si me quieres, quiéreme entera, no por zonas de luz o sombra... Si me quieres, quiéreme simple, no de blanca geografía...",
+    "autor": "Dulce María Loynaz"
+  },
+  {
+    "id": 4,
+    "titulo": "Piedra Negra sobre Piedra Blanca",
+    "texto": "Me moriré en París con aguacero, un día del cual tengo ya el recuerdo. Me moriré —y no me corro— tal vez un jueves, como es hoy, de otoño.",
+    "autor": "César Vallejo"
+  },
+  {
+    "id": 5,
+    "titulo": "Rima LIII",
+    "texto": "¿Volverán las oscuras golondrinas en tu balcón sus nidos a colgar, y otra vez con el ala a sus cristales jugando llamarán?",
+    "autor": "Gustavo Adolfo Bécquer"
+  },
+  {
+    "id": 6,
+    "titulo": "La Saeta",
+    "texto": "Yo no sé de la saeta, pero sí sé de una flecha que se clavó en mi costado, que yo no sé de la saeta.",
+    "autor": "Federico García Lorca"
+  },
+  {
+    "id": 7,
+    "titulo": "El Sediento",
+    "texto": "Cuando de nuestro amor la llama apasionada dentro tu pecho, amante, contemple yo extinguida, ya que tan sólo cabe, de mí para contigo, la inmolación de toda la vida.",
+    "autor": "Sor Juana Inés de la Cruz"
+  },
+  {
+    "id": 8,
+    "titulo": "Jardín",
+    "texto": "Era el jardín de mi infancia. Un jardín sin flores, ni pájaros. Pero estaba lleno de recuerdos, que eran mis únicas flores, mis únicos pájaros.",
+    "autor": "Juan Ramón Jiménez"
+  },
+  {
+    "id": 9,
+    "titulo": "Poema 20",
+    "texto": "La noche está estrellada, y tiritan, azules, los astros, a lo lejos. El viento de la noche gira en el cielo y canta.",
+    "autor": "Pablo Neruda"
+  },
+  {
+    "id": 10,
+    "titulo": "Viaje Definitivo",
+    "texto": "Y yo me iré. Y se quedarán los pájaros cantando. Y se quedará mi huerto con su verde árbol, y con su pozo blanco.",
+    "autor": "Juan Ramón Jiménez"
+  }
+]

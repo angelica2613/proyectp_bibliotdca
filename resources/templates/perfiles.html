@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Perfiles - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      /* Fondo de biblioteca consistente */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #222;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    .contenedor-perfiles {
+      background: linear-gradient(135deg, #fffef0, #f9f9f9);
+      border: 3px solid #d4af37;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    table th {
+      background-color: #1e3a8a;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table tr:hover {
+      background-color: #f0f4ff;
+      transition: 0.2s;
+    }
+
+    .boton-nuevo {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s;
+    }
+
+    .boton-nuevo:hover {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    .boton-accion {
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .boton-accion:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}">Usuarios</a>
+        <a th:href="@{/clientes}">Clientes</a>
+        <a th:href="@{/libros}">Libros</a>
+        <a th:href="@{/categorias}">Categorías</a>
+        <a th:href="@{/prestamos}">Préstamos</a>
+        <a th:href="@{/ventas}">Ventas</a>
+        <a th:href="@{/perfiles}">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 p-6">
+    <div class="contenedor-perfiles p-8 mx-auto max-w-5xl">
+      <h1 class="text-4xl font-bold text-center mb-6">
+        <i class="fas fa-user-cog mr-2"></i> Gestión de Perfiles
+      </h1>
+
+      <div class="flex justify-start mb-6">
+        <a th:href="@{/perfiles/nuevo}" class="boton-nuevo">
+          <i class="fas fa-plus mr-2"></i> Nuevo Perfil
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow">
+          <thead>
+            <tr>
+              <th class="border p-3">ID</th>
+              <th class="border p-3">Imagen</th>
+              <th class="border p-3">Nombre</th>
+              <th class="border p-3">Descripción</th>
+              <th class="border p-3 w-40">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="perfil : ${perfiles}">
+              <td class="border p-3 text-center font-mono" th:text="${perfil.id}"></td>
+
+              <!-- Columna Imagen -->
+              <td class="p-3">
+                <!-- Aquí se muestra la imagen -->
+                <!-- Si el perfil tiene una imagen, la muestra -->
+                <img th:if="${perfil.imagen != null}" th:src="@{${perfil.imagen}}" alt="Imagen de perfil"
+                  class="w-16 h-16 object-cover rounded-full mx-auto border-2 border-blue-300" />
+                <!-- Si el perfil NO tiene imagen, muestra la imagen por defecto -->
+                <img th:unless="${perfil.imagen != null}" th:src="@{/images/avatar-default.png}" alt="Imagen de perfil"
+                  class="w-16 h-16 object-cover rounded-full mx-auto border-2 border-blue-300" />
+              </td>
+
+              <td class="border p-3 font-semibold" th:text="${perfil.nombre}"></td>
+              <td class="border p-3 text-sm text-gray-700" th:text="${perfil.descripcion}"></td>
+
+              <td class="border p-3 text-center space-x-2 whitespace-nowrap">
+                <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="boton-accion text-blue-700 bg-blue-100">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="#" th:onclick="|confirmarEliminacion('${perfil.id}');|"
+                  class="boton-accion text-red-700 bg-red-100">
+                  <i class="fas fa-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(perfiles)}">
+              <td colspan="5" class="border p-4 text-center text-gray-500 font-semibold">
+                No hay perfiles de usuario registrados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center mt-8">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+
+  <script>
+    function confirmarEliminacion(id) {
+      Swal.fire({
+        title: '¿Estás segura(o)?',
+        text: 'Eliminar este perfil podría afectar a los usuarios asociados. ¡No podrás revertir esta acción!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#3B82F6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: '#fffef0',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/entrepaginas/perfiles/eliminar/${id}`;
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

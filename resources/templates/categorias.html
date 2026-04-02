@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Categorías - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      z-index: 1;
+      position: relative;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    .contenedor-categorias {
+      background: linear-gradient(135deg, #fffef0, #f5f5f5);
+      border: 3px solid #d4af37;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .boton-nuevo {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .boton-nuevo:hover {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    /* BOTONES DE ACCIÓN */
+    .boton-accion {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.2s;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+
+    .btn-editar {
+      background-color: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    .btn-editar:hover {
+      background-color: #1e40af;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-eliminar {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      margin-left: 0.5rem;
+    }
+
+    .btn-eliminar:hover {
+      background-color: #dc2626;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+
+    @media (max-width: 600px) {
+      .contenedor-categorias {
+        padding: 1rem;
+        margin: 0 0.5rem;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      .boton-nuevo {
+        font-size: 0.9rem;
+      }
+
+      .boton-accion {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/entrepaginas/dashboard}" class="text-xl font-bold">
+        <i class="fas fa-book-open mr-2"></i>Entre Páginas
+      </a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 p-6">
+    <div class="contenedor-categorias p-6 mx-auto max-w-4xl">
+      <h1 class="text-3xl font-bold text-center mb-6">
+        <i class="fas fa-tags mr-2"></i> Gestión de Categorías
+      </h1>
+
+      <!-- MENSAJE DE ÉXITO -->
+      <div th:if="${mensajeExito}" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg">
+        <div class="flex items-center">
+          <i class="fas fa-check-circle text-green-500 mr-2"></i>
+          <span th:text="${mensajeExito}" class="font-medium"></span>
+        </div>
+      </div>
+
+      <a th:href="@{categorias/nuevo}" class="boton-nuevo text-white px-4 py-2 rounded mb-4 inline-block">
+        <i class="fas fa-plus mr-2"></i> Nueva Categoría
+      </a>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 min-w-max bg-white rounded-lg shadow-lg">
+          <thead class="bg-blue-800 text-white">
+            <tr>
+              <th class="border p-3">ID</th>
+              <th class="border p-3">Nombre</th>
+              <th class="border p-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="categoria : ${categorias}" class="even:bg-gray-100 hover:bg-yellow-50 transition duration-150">
+              <td class="border p-3 text-center" th:text="${categoria.id}">
+                1
+              </td>
+              <td class="border p-3" th:text="${categoria.nombre}">Drama</td>
+              <td class="border p-3 text-center">
+                <!-- BOTÓN EDITAR - VA AL HTML DE EDICIÓN -->
+                <a th:href="@{/categorias/editar/{id}(id=${categoria.id})}" class="boton-accion btn-editar">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+
+                <!-- BOTÓN ELIMINAR CON SWEETALERT -->
+                <a href="#" th:onclick="|confirmarEliminacion(${categoria.id});|" class="boton-accion btn-eliminar">
+                  <i class="fas fa-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(categorias)}">
+              <td colspan="3" class="text-center p-3 text-gray-500">
+                No hay categorías registradas.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+
+  <<<<<<< HEAD <script th:src="@{/js/categorias.js}">
+    </script>
+
+</body>
+
+</html>
+=======
+<script>
+  // SWEETALERT PARA ELIMINAR
+  function confirmarEliminacion(id) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¡No podrás revertir esta acción!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#DC2626',
+      cancelButtonColor: '#3B82F6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      background: '#fffef0',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `categorias/eliminar/${id}`;
+      }
+    });
+  }
+</script>
+</body>
+
+</html>

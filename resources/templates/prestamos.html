@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Préstamos - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* === Estilos Base Unificados === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      /* Fondo de biblioteca consistente */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      /* Capa oscura consistente */
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* === Estilos Navbar (Azul) === */
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    .contenedor-prestamos {
+      background: linear-gradient(135deg, #fffef0, #f9f9f9);
+      border: 3px solid #d4af37;
+      /* Borde dorado consistente */
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos de la tabla unificados */
+    table th {
+      background-color: #1e3a8a;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table tr:hover {
+      background-color: #f0f4ff;
+      transition: 0.2s;
+    }
+
+    .boton-nuevo {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .boton-nuevo:hover {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    /* Clases de Botones de Acción - Unificadas y Mejoradas */
+    .boton-devolver,
+    .boton-editar,
+    .boton-eliminar {
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      color: white;
+      /* Color blanco para el texto de todos */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .boton-devolver {
+      background-color: #ef4444;
+      /* Rojo/Danger */
+    }
+
+    .boton-devolver:hover {
+      background-color: #b91c1c;
+      transform: scale(1.05);
+    }
+
+    .boton-editar {
+      background-color: #fbbf24;
+      /* Amarillo */
+    }
+
+    .boton-editar:hover {
+      background-color: #d97706;
+      transform: scale(1.05);
+    }
+
+    .boton-eliminar {
+      background-color: #dc2626;
+      /* Rojo */
+    }
+
+    .boton-eliminar:hover {
+      background-color: #b91c1c;
+      transform: scale(1.05);
+    }
+
+    /* Footer - Azul Marino Consistente */
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 p-6">
+    <div class="contenedor-prestamos p-8 mx-auto max-w-7xl">
+      <h1 class="text-4xl font-bold text-center mb-6">
+        <i class="fas fa-handshake mr-2"></i> Gestión de Préstamos
+      </h1>
+      <div class="flex justify-between items-center mb-6">
+        <a th:href="@{/prestamos/nuevo}" class="boton-nuevo shadow-lg hover:shadow-xl">
+          <!-- CORREGIDO: Añadido /prestamos/ a la ruta -->
+          <i class="fas fa-plus mr-2"></i> Nuevo Préstamo
+        </a>
+      </div>
+
+      <div class="overflow-x-auto shadow-xl rounded-lg">
+        <table class="w-full border-collapse min-w-max text-sm text-center">
+          <thead>
+            <tr>
+              <th class="p-3 rounded-tl-lg border-r">ID</th>
+              <th class="p-3 border-r">Cliente</th>
+              <th class="p-3 border-r">Libro</th>
+              <th class="p-3 border-r">Fecha Préstamo</th>
+              <th class="p-3 border-r">Fecha Devolución</th>
+              <th class="p-3 border-r">Estado</th>
+              <th class="p-3 rounded-tr-lg">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="prestamo : ${prestamos}" class="border-b border-gray-200">
+              <td class="p-3 font-semibold text-blue-800" th:text="${prestamo.id}"></td>
+              <td class="p-3 text-gray-700"
+                th:text="${prestamo.cliente != null ? prestamo.cliente.nombre : 'Sin cliente'}"></td>
+              <td class="p-3 italic font-medium text-gray-800"
+                th:text="${prestamo.libro != null ? prestamo.libro.titulo : 'Sin libro'}"></td>
+              <td class="p-3" th:text="${prestamo.fechaPrestamo}"></td>
+              <td class="p-3" th:text="${prestamo.fechaDevolucion}"></td>
+              <td class="p-3 font-bold" th:classappend="${prestamo.activo} ? 'text-green-600' : 'text-gray-500'">
+                <i th:classappend="${prestamo.activo} ? 'fa-check-circle' : 'fa-times-circle'" class="fas mr-1"></i>
+                <span th:text="${prestamo.activo} ? 'Activo' : 'Devuelto'"></span>
+              </td>
+              <td class="p-3 flex justify-center gap-2">
+                <a th:if="${prestamo.activo}" href="#" class="boton-devolver shadow-md hover:shadow-lg"
+                  th:data-id="${prestamo.id}"
+                  th:data-cliente="${prestamo.cliente != null ? prestamo.cliente.nombre : 'Sin cliente'}"
+                  th:data-libro="${prestamo.libro != null ? prestamo.libro.titulo : 'Sin libro'}"
+                  onclick="confirmarDevolucion(this.dataset.id, this.dataset.cliente, this.dataset.libro)">
+                  <i class="fas fa-undo mr-1"></i> Devolver
+                </a>
+
+                <a href="#" class="boton-eliminar shadow-md hover:shadow-lg" th:data-id="${prestamo.id}"
+                  th:data-cliente="${prestamo.cliente != null ? prestamo.cliente.nombre : 'Sin cliente'}"
+                  th:data-libro="${prestamo.libro != null ? prestamo.libro.titulo : 'Sin libro'}"
+                  onclick="confirmarEliminacion(this.dataset.id, this.dataset.cliente, this.dataset.libro)">
+                  <i class="fas fa-trash mr-1"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(prestamos)}">
+              <td colspan="7" class="p-4 text-center text-gray-500 font-semibold">
+                No hay préstamos registrados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+
+  <script th:src="@{/js/prestamos.js}"></script>
+</body>
+
+</html>

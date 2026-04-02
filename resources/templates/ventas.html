@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Ventas - Entre Páginas</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    /* === Estilos (Asegurando la consistencia visual) === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    .contenedor-ventas {
+      background: linear-gradient(135deg, #fffef0, #f9f9f9);
+      border: 3px solid #d4af37;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    table th {
+      background-color: #1e3a8a;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table tr:hover {
+      background-color: #f0f4ff;
+      transition: 0.2s;
+    }
+
+    .boton-nuevo {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .boton-nuevo:hover {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    /* === Estilos de Botones de Acción (Editar, Detalle, Anular) === */
+    .boton-anular,
+    .boton-detalle,
+    .boton-editar {
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .boton-anular {
+      background-color: #dc2626;
+    }
+
+    /* Rojo para Anular */
+    .boton-anular:hover {
+      background-color: #b91c1c;
+      transform: scale(1.05);
+    }
+
+    .boton-detalle {
+      background-color: #059669;
+    }
+
+    /* Verde para Ver Detalle */
+    .boton-detalle:hover {
+      background-color: #047857;
+      transform: scale(1.05);
+    }
+
+    .boton-editar {
+      background-color: #3b82f6;
+    }
+
+    /* Azul para Editar */
+    .boton-editar:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold">
+        <i class="fas fa-book-open mr-2"></i>Entre Páginas
+      </a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/ventas}" class="hover:underline font-semibold">Ventas</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 p-6">
+    <div class="contenedor-ventas p-8 mx-auto max-w-7xl">
+      <h1 class="text-4xl font-bold text-center mb-6">
+        <i class="fas fa-cash-register mr-3"></i> Gestión de Ventas
+      </h1>
+
+      <div class="flex justify-between items-center mb-6">
+        <a th:href="@{/ventas/nueva}" class="boton-nuevo shadow-lg hover:shadow-xl">
+          <i class="fas fa-plus mr-2"></i> Nueva Venta
+        </a>
+      </div>
+
+      <div class="overflow-x-auto shadow-xl rounded-lg">
+        <table class="w-full border-collapse min-w-max text-sm text-center">
+          <thead>
+            <tr>
+              <th class="p-3 rounded-tl-lg border-r">ID Venta</th>
+              <th class="p-3 border-r">Cliente</th>
+              <th class="p-3 border-r">Libro(s)</th>
+              <th class="p-3 border-r">Fecha</th>
+              <th class="p-3 border-r">Total</th>
+              <th class="p-3 border-r">Estado</th>
+              <th class="p-3 rounded-tr-lg">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="venta : ${ventas}" class="border-b border-gray-200">
+              <td class="p-3 font-semibold text-blue-800" th:text="${venta.id}"></td>
+              <td class="p-3 text-gray-700" th:text="${venta.cliente != null ? venta.cliente.nombre : 'Mostrador'}">
+              </td>
+
+              <td class="p-3 text-left">
+                <div th:each="detalle, iter : ${venta.detallesVenta}" class="mb-1">
+                  <th:block th:if="${iter.index < 3}">
+                    <span th:text="${detalle.libro.titulo}"></span>
+                    <small class="text-gray-500">x<span th:text="${detalle.cantidad}"></span></small><br
+                      th:if="${iter.index < 2 and !iter.last}" />
+                  </th:block>
+                  <th:block th:if="${iter.index == 3}">
+                    <small class="text-gray-500 italic">+ [[${venta.detallesVenta.size() - 3}]] más</small>
+                  </th:block>
+                </div>
+              </td>
+
+              <td class="p-3" th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}"></td>
+              <td class="p-3 font-bold text-green-700" th:text="'S/ ' + ${#numbers.formatDecimal(venta.total, 1, 2)}">
+              </td>
+
+              <td class="p-3">
+                <span class="px-3 py-1 rounded-full text-xs font-medium"
+                  th:classappend="${venta.anulada} ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'"
+                  th:text="${venta.anulada} ? 'ANULADA' : 'COMPLETADA'"></span>
+              </td>
+
+              <td class="p-3 flex justify-center gap-2">
+
+                <a th:href="@{'/ventas/detalle/' + ${venta.id}}" class="boton-detalle shadow-md hover:shadow-lg">
+                  <i class="fas fa-receipt mr-1"></i> Ver
+                </a>
+
+
+
+                <a th:unless="${venta.anulada}" href="#" class="boton-anular shadow-md hover:shadow-lg"
+                  th:data-id="${venta.id}"
+                  th:data-cliente="${venta.cliente != null ? venta.cliente.nombre : 'Mostrador'}"
+                  onclick="confirmarAnulacion(this.dataset.id, this.dataset.cliente)">
+                  <i class="fas fa-ban mr-1"></i> Anular
+                </a>
+              </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(ventas)}">
+              <td colspan="7" class="p-8 text-center text-gray-500 font-semibold">
+                No hay ventas registradas aún.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a> |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+
+  <script>
+    // Función para confirmar la anulación de una venta
+    function confirmarAnulacion(idVenta, nombreCliente) {
+      Swal.fire({
+        title: '¿Estás seguro de anular esta venta?',
+        html: `Vas a anular la venta **ID ${idVenta}** realizada a **${nombreCliente}**. <br><br> Esta acción no se puede deshacer y el stock de libros será repuesto.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626', // Rojo para anular
+        cancelButtonColor: '#1e40af',  // Azul para cancelar
+        confirmButtonText: '<i class="fas fa-ban"></i> Sí, Anular Venta',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirige al controlador de Spring Boot para procesar la anulación
+          window.location.href = '/ventas/anular/' + idVenta;
+        }
+      })
+    }
+
+    // Función para mostrar mensajes de éxito o error al cargar la página (después de una redirección)
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const successMessage = urlParams.get('successMessage');
+      const errorMessage = urlParams.get('errorMessage');
+
+      if (successMessage) {
+        Swal.fire({
+          title: '¡Operación Exitosa!',
+          text: successMessage,
+          icon: 'success',
+          confirmButtonColor: '#059669' // Verde
+        });
+        // Limpia el parámetro de la URL
+        history.replaceState(null, '', window.location.pathname);
+      }
+
+      if (errorMessage) {
+        Swal.fire({
+          title: '¡Error!',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonColor: '#dc2626' // Rojo
+        });
+        // Limpia el parámetro de la URL
+        history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  </script>
+</body>
+
+</html>

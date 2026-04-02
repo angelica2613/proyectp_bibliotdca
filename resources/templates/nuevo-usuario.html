@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo Usuario - Entre Páginas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      /* === Estilos Base Unificados === */
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 0;
+      }
+
+      nav,
+      main,
+      footer {
+        z-index: 1;
+        position: relative;
+      }
+
+      /* === Estilos Navbar (Azul) === */
+      .navbar {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      }
+
+      .navbar a {
+        color: #93c5fd;
+        transition: color 0.3s;
+      }
+
+      .navbar a:hover {
+        color: #eff6ff;
+      }
+
+      .contenedor-formulario {
+        background: linear-gradient(135deg, #fffef0, #f5f5f5);
+        border: 3px solid #d4af37;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+      }
+
+      h1 {
+        font-family: 'Merriweather', serif;
+        color: #1e3a8a;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .boton-guardar {
+        background: linear-gradient(90deg, #1e40af, #2563eb);
+        transition: background 0.3s, transform 0.2s;
+      }
+
+      .boton-guardar:hover {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+        transform: translateY(-2px);
+      }
+
+      /* Footer - Azul Marino Consistente */
+      footer {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      }
+
+      footer a {
+        color: #93c5fd;
+        transition: color 0.3s;
+      }
+
+      footer a:hover {
+        color: #eff6ff;
+      }
+
+      @media (max-width: 600px) {
+        .contenedor-formulario {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.75rem;
+        }
+
+        .boton-guardar {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <nav class="navbar text-white py-4 px-6">
+      <div class="container mx-auto flex justify-between items-center">
+        <a th:href="@{/dashboard}" class="text-xl font-bold"
+          ><i class="fas fa-book-open mr-2"></i>Entre Páginas</a
+        >
+        <div class="flex items-center space-x-4">
+          <span
+            th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'"
+            th:if="${loggedInUser}"
+            sec:authorize="isAuthenticated()"
+          ></span>
+          <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+          <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+          <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+          <a th:href="@{/libros}" class="hover:underline">Libros</a>
+          <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+          <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+          <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+          <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+          <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+          <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+        </div>
+      </div>
+    </nav>
+    <main class="flex-1 p-6 flex items-center justify-center">
+      <div class="contenedor-formulario p-8 mx-auto max-w-md w-full">
+        <h1 class="text-3xl font-bold text-center mb-6">
+          <i class="fas fa-user-plus mr-2"></i> Nuevo Usuario
+        </h1>
+
+        <form
+          th:action="@{/usuarios}"
+          method="post"
+          class="space-y-5"
+          onsubmit="return validarFormulario()"
+        >
+          <div>
+            <label
+              for="correo"
+              class="block text-sm font-medium text-blue-800 mb-1"
+              >Correo</label
+            >
+            <input
+              type="email"
+              id="correo"
+              name="correo"
+              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="contrasena"
+              class="block text-sm font-medium text-blue-800 mb-1"
+              >Contraseña</label
+            >
+            <input
+              type="password"
+              id="contrasena"
+              name="contrasena"
+              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              required
+            />
+            <p class="text-xs text-gray-500 mt-1">
+              Debe tener al menos 8 caracteres, incluyendo una letra y un
+              número.
+            </p>
+          </div>
+          <div>
+            <label
+              for="rol"
+              class="block text-sm font-medium text-blue-800 mb-1"
+              >Rol</label
+            >
+            <select
+              id="rol"
+              name="rol"
+              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            >
+              <option value="ADMIN">Administrador</option>
+              <option value="BIBLIOTECARIO">Bibliotecario</option>
+              <option value="USER">Usuario</option>
+              <option value="LECTOR">Lector</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="w-full boton-guardar text-white py-3 rounded-lg font-semibold shadow-md"
+          >
+            <i class="fas fa-save mr-2"></i> Guardar Usuario
+          </button>
+
+          <a
+            th:href="@{/usuarios}"
+            class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-medium transition duration-200"
+          >
+            <i class="fas fa-arrow-left mr-2"></i> Volver a Usuarios
+          </a>
+        </form>
+      </div>
+    </main>
+    <footer class="text-white py-4 text-center mt-auto">
+      <p>
+        © 2025 Entre Páginas | Contacto:
+        <a href="mailto:info@entrepaginas.org" class="underline"
+          >info@entrepaginas.org</a
+        >
+        |
+        <a
+          href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+          class="underline bg-green-500 px-2 py-1 rounded"
+          >WhatsApp</a
+        >
+      </p>
+    </footer>
+
+    <script>
+      function validarFormulario() {
+        const contrasena = document.getElementById('contrasena').value;
+        // Expresión regular: al menos 8 caracteres, al menos una letra (mayús o minús) y al menos un número.
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(contrasena)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de Contraseña',
+            text: 'La contraseña debe tener al menos 8 caracteres, incluyendo una letra y un número.',
+            confirmButtonColor: '#1E40AF',
+            background: '#fffef0',
+          });
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </body>
+</html>

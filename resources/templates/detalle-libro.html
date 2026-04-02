@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${libro.titulo} + ' - Detalles del Libro'"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* === Estilos Base Unificados === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97');
+ background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          min-height: 100vh;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        /* Capa oscura consistente */
+        z-index: 0;
+      }
+
+      nav,
+      main,
+      footer {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* === Estilos Navbar (Azul) === */
+      .navbar {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      }
+
+      .navbar a {
+        color: #93c5fd;
+        transition: color 0.3s;
+      }
+
+      .navbar a:hover {
+        color: #eff6ff;
+      }
+
+      .contenedor-detalle {
+        background: linear-gradient(135deg, #fffef0, #f9f9f9);
+        border: 3px solid #d4af37;
+        /* Borde dorado consistente */
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+      }
+
+      h1 {
+        font-family: 'Merriweather', serif;
+        color: #1e3a8a;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .disponible {
+        color: #10b981;
+        /* green-500 */
+        font-weight: 600;
+      }
+
+      .no-disponible {
+        color: #ef4444;
+        /* red-500 */
+        font-weight: 600;
+      }
+
+      .boton-prestar {
+        background: linear-gradient(90deg, #10b981, #059669);
+        /* Verde */
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s;
+      }
+
+      .boton-prestar:hover {
+        background: linear-gradient(90deg, #059669, #047857);
+        transform: translateY(-2px);
+      }
+
+      /* Footer - Azul Marino Consistente */
+      footer {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      }
+
+      footer a {
+        color: #93c5fd;
+        transition: color 0.3s;
+      }
+
+      footer a:hover {
+        color: #eff6ff;
+      }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'" th:if="${usuarioNombre}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogo}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 p-6 flex items-center justify-center">
+    <div class="contenedor-detalle p-8 mx-auto max-w-4xl flex flex-col md:flex-row gap-8">
+      <div class="md:w-1/3 flex-shrink-0">
+        <img th:src="@{${libro.imagen != null ? libro.imagen : '/images/book-default.png'}}"
+          th:onerror="|this.src='@{/images/book-default.png}'|" alt="Portada del libro"
+          class="w-full h-64 object-cover" />
+      </div>
+      <div class="md:w-2/3">
+        <h1 class="text-4xl font-bold text-blue-800 mb-4" th:text="${libro.titulo}">
+          Título del Libro
+        </h1>
+        <p class="text-xl text-gray-800 mb-2">
+          <span class="font-semibold">Autor:</span>
+          <span th:text="${libro.autor}">Autor del Libro</span>
+        </p>
+        <p class="text-lg text-gray-700 mb-2">
+          <span class="font-semibold">Género:</span>
+          <span th:text="${libro.genero}">Género del Libro</span>
+        </p>
+        <p class="text-lg text-gray-700 mb-4">
+          <span class="font-semibold">ISBN:</span>
+          <span th:text="${libro.isbn}">ISBN del Libro</span>
+        </p>
+        <p class="text-gray-800 leading-relaxed mb-6" th:text="${libro.descripcion}">
+          Descripción detallada del libro. Lorem ipsum dolor sit amet,
+          consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua.
+        </p>
+
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-lg font-semibold">Estado:</span>
+          <span th:classappend="${libro.disponible} ? 'disponible' : 'no-disponible'" class="text-lg">
+            <i th:classappend="${libro.disponible} ? 'fa-check-circle' : 'fa-times-circle'" class="fas mr-1"></i>
+            <span th:text="${libro.disponible} ? 'Disponible para préstamo' : 'No disponible (prestado)'"></span>
+          </span>
+        </div>
+
+        <div class="flex gap-4">
+          <a th:href="@{/catalogo}"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200">
+            <i class="fas fa-arrow-left mr-2"></i> Volver al Catálogo
+          </a>
+          <!-- Botón de prestar (ejemplo, la lógica real de préstamo se haría en otro lugar o con JS) -->
+          <button th:if="${libro.disponible}" id="prestarLibroBtn" th:data-id="${libro.id}"
+            th:data-titulo="${libro.titulo}" class="boton-prestar shadow-md hover:shadow-lg">
+            <i class="fas fa-handshake mr-2"></i> Prestar Libro
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', () => {
+      const prestarLibroBtn = document.getElementById('prestarLibroBtn');
+
+      if (prestarLibroBtn) {
+        prestarLibroBtn.addEventListener('click', async () => {
+          const libroId = prestarLibroBtn.dataset.id;
+          const libroTitulo = prestarLibroBtn.dataset.titulo;
+
+          Swal.fire({
+            title: '¿Deseas prestar este libro?',
+            html: `Estás a punto de prestar <strong>${libroTitulo}</strong>.`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, prestar',
+            cancelButtonText: 'Cancelar',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Procesando...',
+                text: 'Por favor, espere.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                },
+              });
+
+              try {
+                const response = await fetch(
+                    /*[[@{/catalogo/prestar/}]]*/ +libroId,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  }
+                );
+                const data = await response.json();
+
+                Swal.close();
+
+                if (data.success) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: '¡Préstamo exitoso!',
+                    text: data.message,
+                    confirmButtonColor: '#3085d6',
+                  }).then(() => {
+                    window.location.reload(); // Recargar la página para actualizar el estado
+                  });
+                } else {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error al prestar',
+                    text: data.message,
+                    confirmButtonColor: '#d33',
+                  });
+                }
+              } catch (error) {
+                Swal.close();
+                console.error(
+                  'Error al realizar la solicitud de préstamo:',
+                  error
+                );
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  text: 'No se pudo conectar con el servidor para realizar el préstamo.',
+                  confirmButtonColor: '#d33',
+                });
+              }
+            }
+          });
+        });
+      }
+    });
+    /*]]>*/
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Clientes - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* === Estilos Base Unificados === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      color: #222;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* === Estilos Navbar (Azul) === */
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    /* === Contenedor Principal (Dorado) === */
+    .contenedor-clientes {
+      background: linear-gradient(135deg, #fffef0, #f5f5f5);
+      border: 3px solid #d4af37; /* Borde dorado consistente */
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+    }
+
+    /* === Títulos === */
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      /* Color azul consistente */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* === Tabla y Footer === */
+    th {
+      background-color: #1e40af;
+      /* Azul marino para headers (consistencia) */
+      color: white;
+      border-color: #3b82f6;
+      /* Borde azul claro */
+    }
+
+    .table-container {
+      /* Estilo aplicado al div que envuelve la tabla */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* Footer - Azul Marino Consistente */
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+
+    /* Media Query */
+    @media (max-width: 600px) {
+      .contenedor-clientes {
+        padding: 1rem;
+        margin: 1rem auto;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 p-4 sm:p-8">
+    <div class="contenedor-clientes mx-auto max-w-5xl">
+      <div class="text-center mb-6">
+        <i class="fas fa-user-friends text-5xl text-yellow-500 mb-2 drop-shadow-lg"></i>
+        <h1 class="text-4xl font-bold drop-shadow-lg">Gestión de Clientes</h1>
+        <p class="text-gray-700 text-sm mt-1">
+          Administra la información de los usuarios registrados.
+        </p>
+      </div>
+
+      <div class="text-center mb-6">
+        <a th:href="@{/clientes/nuevo}"
+          class="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-yellow-600 hover:to-amber-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition duration-300 inline-block">
+          <i class="fas fa-plus mr-2"></i> Nuevo Cliente
+        </a>
+      </div>
+
+      <div class="overflow-x-auto table-container bg-white">
+        <table class="w-full border-collapse text-center">
+          <thead>
+            <tr class="text-white">
+              <th class="border border-blue-600 p-3 rounded-tl-xl">🆔 ID</th>
+              <th class="border border-blue-600 p-3">👤 Nombre</th>
+              <th class="border border-blue-600 p-3">📧 Correo</th>
+              <th class="border border-blue-600 p-3">📞 Teléfono</th>
+              <th class="border border-blue-600 p-3 rounded-tr-xl">
+                ⚙️ Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="cliente : ${clientes}" class="even:bg-gray-50 hover:bg-yellow-100 transition duration-300">
+              <td class="border border-gray-300 p-3" th:text="${cliente.id}"></td>
+              <td class="border border-gray-300 p-3 flex items-center justify-center gap-2">
+                <i class="fas fa-user text-blue-600"></i>
+                <span th:text="${cliente.nombre}"></span>
+              </td>
+              <td class="border border-gray-300 p-3" th:text="${cliente.correo}"></td>
+              <td class="border border-gray-300 p-3" th:text="${cliente.telefono}"></td>
+              <td class="border border-gray-300 p-3 space-x-3">
+                <a th:href="@{/clientes/editar/{id}(id=${cliente.id})}"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm transition duration-300 inline-block">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+                <a th:href="@{/clientes/eliminar/{id}(id=${cliente.id})}"
+                  class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm transition duration-300 inline-block"
+                  onclick="return confirm('¿Estás seguro de que deseas eliminar a este cliente?');">
+                  <i class="fas fa-trash-alt"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(clientes)}">
+              <td colspan="5" class="border border-gray-300 p-4 text-gray-600 font-semibold">
+                No hay clientes registrados en la base de datos.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-white py-4 text-center">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 hover:bg-green-600 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
+  <script th:src="@{/js/clientes.js}"></script>
+
+</body>
+
+</html>

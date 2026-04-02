@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voucher POS - Venta ID [[${venta.id}]]</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        /* Estilos específicos para la apariencia de un voucher */
+        .voucher {
+            width: 300px;
+            /* Ancho típico de un recibo de caja */
+            font-family: monospace;
+            /* Fuente monoespaciada para el look POS */
+            font-size: 12px;
+            color: #000;
+            background: #fff;
+            padding: 10px;
+            border: 1px dashed #333;
+            /* Borde punteado simulando el corte */
+        }
+
+        /* Clase para simular el centrado de texto impreso */
+        .center-print {
+            text-align: center;
+        }
+
+        /* Ocultar elementos de control al imprimir */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+
+    <div class="voucher bg-white shadow-xl">
+
+        <div class="center-print mb-4 border-b border-dashed border-gray-400 pb-2">
+            <h1 class="text-lg font-bold">ENTRE PÁGINAS</h1>
+            <p>RUC: 10987654321</p>
+            <p>Av. Principal #123, Ferreñafe</p>
+            <p>Tel: (074) 123-456</p>
+        </div>
+
+        <div class="mb-4 text-left border-b border-dashed border-gray-400 pb-2">
+            <p class="font-bold">VENTA N°: <span th:text="${venta.id}">1001</span></p>
+            <p class="font-bold">TIPO: <span th:text="${venta.tipoComprobante}">BOLETA</span></p>
+            <p>FECHA: <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}">05/12/2025</span></p>
+            <p>HORA: <span th:text="${#temporals.format(venta.fechaVenta, 'HH:mm:ss')}">10:45:00</span></p>
+            <p>CAJERO: <span th:text="${venta.usuario != null ? venta.usuario.correo : 'Sistema'}">Sistema</span></p>
+        </div>
+
+        <div class="mb-4 text-left border-b border-dashed border-gray-400 pb-2" th:if="${venta.cliente != null}">
+            <p>CLIENTE: <span th:text="${venta.cliente.nombre}">Cliente Genérico</span>
+            </p>
+            <p>DOC: <span th:text="${venta.cliente.dni}">12345678</span></p>
+            <p th:if="${venta.tipoComprobante == 'FACTURA' and venta.cliente.ruc != null}">RUC: <span
+                    th:text="${venta.cliente.ruc}">10123456789</span></p>
+        </div>
+        <div class="mb-4 text-left border-b border-dashed border-gray-400 pb-2" th:unless="${venta.cliente != null}">
+            <p>CLIENTE: MOSTRADOR</p>
+        </div>
+
+        <div class="mb-4">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="text-left">DESCRIPCION</th>
+                        <th class="text-right">CANT</th>
+                        <th class="text-right">PRECIO</th>
+                        <th class="text-right">TOTAL</th>
+                    </tr>
+                    <tr class="h-1">
+                        <td colspan="4" class="border-b border-dashed border-gray-400"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="detalle : ${venta.detallesVenta}">
+                        <td class="text-left" th:text="${#strings.abbreviate(detalle.libro.titulo, 20)}">
+                            Libro de Prueba</td>
+                        <td class="text-right" th:text="${detalle.cantidad}">1</td>
+                        <td class="text-right" th:text="${#numbers.formatDecimal(detalle.precioUnitario, 1, 2)}">15.00
+                        </td>
+                        <td class="text-right"
+                            th:text="${#numbers.formatDecimal(detalle.cantidad * detalle.precioUnitario, 1, 2)}">15.00
+                        </td>
+                    </tr>
+                    <tr class="h-1">
+                        <td colspan="4" class="border-b border-dashed border-gray-400"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-4 text-right">
+            <p>SUBTOTAL: S/ <span th:text="${#numbers.formatDecimal(venta.total / 1.18, 1, 2)}">84.75</span></p>
+            <p>IGV (18%): S/ <span
+                    th:text="${#numbers.formatDecimal(venta.total - (venta.total / 1.18), 1, 2)}">15.25</span></p>
+            <p class="text-lg font-bold mt-2">TOTAL: S/ <span
+                    th:text="${#numbers.formatDecimal(venta.total, 1, 2)}">100.00</span></p>
+        </div>
+
+        <div class="center-print mt-4">
+            <p class="font-bold text-red-600" th:if="${venta.anulada}">*** VENTA ANULADA ***</p>
+            <p th:unless="${venta.anulada}">¡Gracias por su compra!</p>
+            <p>Libros que inspiran, páginas que enseñan.</p>
+        </div>
+    </div>
+
+    <div class="no-print mt-6 flex gap-4">
+        <button onclick="window.print()"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition duration-150">
+            <i class="fas fa-print mr-2"></i> Imprimir Voucher
+        </button>
+        <a th:href="@{/ventas}"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded shadow-md transition duration-150">
+            <i class="fas fa-arrow-left mr-2"></i> Volver a Ventas
+        </a>
+    </div>
+
+</body>
+
+</html>

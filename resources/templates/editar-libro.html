@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Libro - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* === Estilos Base Unificados === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      /* Fondo de biblioteca consistente */
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      /* Capa oscura consistente */
+      z-index: 0;
+    }
+
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* === Estilos Navbar (Azul) === */
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #eff6ff;
+    }
+
+    /* === Contenedor Principal (Formulario) === */
+    .contenedor-form {
+      background: linear-gradient(135deg, #fffef0, #f5f5f5);
+      border: 3px solid #d4af37;
+      /* Borde dorado consistente */
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    /* === Títulos === */
+    h2 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      /* Color azul consistente */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer - Azul Marino Consistente */
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
+
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/entrepaginas/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre
+        Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 flex items-center justify-center p-6">
+    <form th:action="@{/libros/editar/{id}(id=${libro.id})}" th:object="${libro}" method="post"
+      enctype="multipart/form-data" class="contenedor-form w-full max-w-md p-8 space-y-5">
+      <h2 class="text-3xl font-bold text-center mb-6">
+        <i class="fas fa-book-reader mr-2"></i> Editar Libro
+      </h2>
+
+      <div>
+        <label for="titulo" class="block text-gray-700 font-medium mb-1">Título</label>
+        <input type="text" id="titulo" name="titulo" th:value="${libro.titulo}"
+          class="w-full border border-yellow-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition" />
+      </div>
+
+      <div>
+        <label for="autor" class="block text-gray-700 font-medium mb-1">Autor</label>
+        <input type="text" id="autor" name="autor" th:value="${libro.autor}"
+          class="w-full border border-yellow-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition" />
+      </div>
+
+      <div>
+        <label for="genero" class="block text-gray-700 font-medium mb-1">Género</label>
+        <input type="text" id="genero" name="genero" th:value="${libro.genero}"
+          class="w-full border border-yellow-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition" />
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <input type="checkbox" id="disponible" name="disponible" th:checked="${libro.disponible}"
+          class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+        <label for="disponible" class="text-gray-700 font-medium">Disponible para Préstamo</label>
+      </div>
+
+      <div class="mb-4">
+        <label for="isbn" class="block text-gray-700 text-sm font-bold mb-2">ISBN:</label>
+        <input type="text" id="isbn" th:field="*{isbn}"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          required />
+      </div>
+
+      <div class="mb-4">
+        <label for="descripcion" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
+        <textarea id="descripcion" th:field="*{descripcion}" rows="4"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label for="imagenFile" class="block text-gray-700 text-sm font-bold mb-2">Imagen del Libro (dejar en blanco
+          para mantener la actual):</label>
+        <input type="file" id="imagenFile" name="imagenFile" accept="image/*"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+        <div th:if="${libro.imagen != null and !libro.imagen.isEmpty()}" class="mt-2">
+          <p class="text-gray-600 text-sm">Imagen actual:</p>
+          <img th:src="@{${libro.imagen}}" alt="Imagen actual del libro"
+            class="w-24 h-32 object-cover rounded shadow" />
+        </div>
+      </div>
+
+      <div>
+        <label for="stock" class="block text-gray-700 font-medium mb-1">Stock (Cantidad Disponible)</label>
+        <input type="number" id="stock" name="stock" th:value="${libro.stock}" min="0" required
+          class="w-full border border-yellow-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition" />
+        <p class="text-xs text-gray-600 mt-1">
+          <i class="fas fa-info-circle"></i> Cantidad de ejemplares disponibles en inventario
+        </p>
+      </div>
+
+      <div>
+        <label for="precio" class="block text-gray-700 font-medium mb-1">Precio (S/)</label>
+        <input type="number" id="precio" name="precio" th:value="${libro.precio}" min="0" step="0.01" required
+          class="w-full border border-yellow-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition" />
+        <p class="text-xs text-gray-600 mt-1">
+          <i class="fas fa-info-circle"></i> Precio de venta del libro
+        </p>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 hover:scale-[1.02] shadow-md transition duration-300">
+        <i class="fas fa-sync-alt mr-2"></i> Actualizar Libro
+      </button>
+
+      <a th:href="@{/libros}"
+        class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-medium transition duration-200">
+        <i class="fas fa-arrow-left mr-2"></i> Volver a Gestión de Libros
+      </a>
+    </form>
+  </main>
+
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 hover:bg-green-600 px-2 py-1 rounded ml-1 transition">WhatsApp</a>
+    </p>
+  </footer>
+</body>
+
+</html>
